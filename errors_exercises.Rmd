@@ -1,0 +1,168 @@
+---
+title: "R Notebook"
+output: html_notebook
+editor_options: 
+  chunk_output_type: inline
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
+
+```{r}
+plot(cars)
+```
+
+
+```{r}
+library(tidyverse)
+library(palmerpenguins)
+```
+
+
+```{r}
+
+a <- data.frame(month = c("October", "November", "December", "January", "February"),
+                season = c("Fall", "Fall", "Winter", "Winter", "Winter"),
+                daylight_savings = c("yes", "partly", "no", "no", "no"))
+b <- data.frame(month = c("October", "December", "February"),
+                season = c("Fall", "Winter", "Winter"),
+                daylight_savings = c("yes", "no", "no"))
+```
+
+
+Find the difference between them
+
+```{r}
+
+diff <- anti_join(a,b, "month")
+```
+
+
+Problem 2
+Goal: Modify the following code such that it sorts any blue animals from the animals vector into the blue_animals vector.
+
+```{r}
+
+animals <- tolower(c("blue tang", "red panda", "Blue jay",
+             "green sea turtle", "blue morpho butterfly", 
+             "Blue iguana", "Red squirrel"))
+
+
+blue_animals <- c()
+
+for (i in seq_along(animals)){
+  if (str_detect(animals[i], "blue") == TRUE) {
+     #print(animals[i])
+    blue_animals[i] <- animals[i]
+  }
+}
+
+blue_animals <- blue_animals[!is.na(blue_animals)]
+
+blue_animals
+
+
+```
+
+
+
+```{r}
+
+library(tidyverse)
+library(palmerpenguins)
+ggplot(data = penguins, aes(x = species, y = body_mass_g, shape = sex) +
+  geom_point(alpha = 0.2, position = position_jitterdodge(dodge.width = 0.8)) + 
+  # means & standard devs
+  stat_summary(aes(color = species),
+               fun = "mean", geom = "point", size = 4) +
+  stat_summary(aes(color = species),
+               fun = "mean", geom = "errorbar", size = 1, width = 0.2,
+               fun.max = function(x) mean(x) + sd(x),
+               fun.min = function(x) mean(x) - sd(x)) +
+  # change colors/shapes
+  scale_color_manual(values = c("#FF8C02", "#A93FF1", "#148F90"), name = "Species") + 
+  scale_shape_manual(values = c(15, 16), name = "Sex") + 
+  # add nicer axis labels + title + caption
+  labs(x = "Penguin Species", 
+       y = "Body Mass (g)",
+       title = "Body mass of female vs. male adelie, chinstrap, and gentoo penguins",
+       subtitle = "Colored points represent mean body mass (± SD)",
+       caption = "Data Source: Dr. Kristen Gorman, LTER Palmer Station") +
+  theme_classic() + 
+  theme(
+        plot.title = element_rect(hjust = 0, size = 14),
+        axis.text = element_text(color = "black", size = 10),
+        axis.title = element_rect(color = "black", size = 14),
+        plot.caption = element_text(size = 7, hjust = 1, color = "gray", face = "italic"),
+        panel.border = element_rect(color = "black", size = 0.7, fill = NA))
+```
+
+```{r}
+test_plot <- ggplot(data = na.omit(penguins), aes(x = species, y = body_mass_g, shape =sex)) +
+         geom_point(alpha = 0.2, position = position_jitterdodge(10)) + 
+  stat_summary(aes(color = species),
+               fun = "mean", 
+               geom = "point", 
+               size = 4,
+               position = position_dodge(0.8)) + 
+  stat_summary(aes(color = species),
+               fun = "mean", 
+               geom = "errorbar", 
+               size = 1, 
+               width = 0.2,
+               fun.max = function(x) mean(x) + sd(x),
+               fun.min = function(x) mean(x) - sd(x),
+               position = position_dodge(width = 0.8)) +
+  scale_color_manual(values = c("#FF8C02", "#A93FF1", "#148F90"), name = "Species") + 
+  scale_shape_manual(values = c(15, 16), name = "Sex") +
+  labs(x = "Penguin Species", 
+       y = "Body Mass (g)",
+       title = "Body mass of female vs. male adelie, chinstrap, and gentoo penguins",
+       subtitle = "Colored points represent mean body mass (± SD)",
+       caption = "Data Source: Dr. Kristen Gorman, LTER Palmer Station") +
+  theme_classic() + 
+  theme(
+        plot.title = element_text(hjust = 0, size = 14),
+        axis.text = element_text(color = "black", size = 10),
+        axis.title = element_text(color = "black", size = 14),
+        plot.caption = element_text(size = 7, hjust = 1, color = "gray", face = "italic"),
+        panel.border = element_rect(color = "black", size = 0.7, fill = NA))
+
+test_plot
+```
+
+
+```{r}
+
+ggplot(data = na.omit(penguins), aes(x = species, y = body_mass_g) +
+  geom_point(alpha = 0.2, position = position_jitterdodge(dodge.width = 0.8)) + 
+  # means & standard devs
+  stat_summary(mapping = aes(color = species),
+               fun = "mean", geom = "point", size = 4,
+               position = position_dodge(width = 0.8)) +
+  stat_summary(mapping = aes(color = species),
+               fun = "mean", geom = "errorbar", size = 1, width = 0.2,
+               fun.max = function(x) mean(x) + sd(x),
+               fun.min = function(x) mean(x) - sd(x),
+               position = position_dodge(width = 0.8)) +
+  # change colors/shapes
+  scale_color_manual(values = c("#FF8C02", "#A93FF1", "#148F90"), name = "Species") + 
+  scale_shape_manual(values = c(15, 16), name = "Sex") + 
+  # add nicer axis labels + title + caption
+  labs(x = "Penguin Species", 
+       y = "Body Mass (g)",
+       title = "Body mass of female vs. male adelie, chinstrap, and gentoo penguins",
+       subtitle = "Colored points represent mean body mass (± SD)",
+       caption = "Data Source: Dr. Kristen Gorman, LTER Palmer Station") +
+  theme_classic() + 
+  theme(
+        plot.title = element_text(hjust = 0, size = 14),
+        axis.text = element_text(color = "black", size = 10),
+        axis.title = element_text(color = "black", size = 14),
+        plot.caption = element_text(size = 7, hjust = 1, color = "gray", face = "italic"),
+        panel.border = element_rect(color = "black", size = 0.7, fill = NA))
+
+
+```
+
